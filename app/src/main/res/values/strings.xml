@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">SeeMyCode</string>
+    <string name="file_or_folder_icon">File or folder icon</string>
+    <string name="mail_feedback_email">mailto:jake@machinelearningforsmallbusiness.com</string>
+    <string name="mail_feedback_title">Feedback on SeeMyCode app</string>
+    <string name="feedback">Feedback</string>
 </resources>

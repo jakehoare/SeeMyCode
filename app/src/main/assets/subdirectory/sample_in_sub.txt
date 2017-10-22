@@ -1,0 +1,4 @@
+this
+is my subdirectory
+sample text
+file
