@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,8 +25,9 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-    //private RecyclerView mFolderContentsView;
-    private ArrayList<HashMap<String, String>> allProblemsList = new ArrayList<>();
+    private RecyclerView mFolderContentsView;
+    private String currentPath = "copy_of_main";
+    private ArrayList<HashMap<String, String>> folderContentsList;
     private TextView mCurrentPath;
     //private GetProblemsFragment mGetProblemsFragment;
     private static final String TAG_FRAGMENT = "get_problems_fragement";
@@ -36,20 +40,35 @@ public class MainActivity extends AppCompatActivity {
 
         TextView mCurrentPath = (TextView) findViewById(R.id.tv_current_path);
 
-        String[] folderContents = null;
+        String[] folderContentsArray = null;
         try {
-            folderContents = getAssets().list("");
+            folderContentsArray = getAssets().list(currentPath);
         } catch (IOException e) {
             // TODO
         }
 
-        String currentPath = TextUtils.join(", ", folderContents);
+        // currentPath = TextUtils.join(", ", folderContents);
         mCurrentPath.setText(currentPath);
 
+        folderContentsList = new ArrayList<>();
+        for (String item : folderContentsArray) {
+            HashMap<String, String> folder = new HashMap<>();
+            folder.put("name", item);
+            if (item.indexOf('.') == -1) {
+                folder.put("type", "folder");
+                // folder.put("icon", "1234");
+            } else {
+                folder.put("type", "file");
+                // folder.put("icon", "1234");
+            }
+            folderContentsList.add(folder);
+        }
 
-    //RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        //mProblemListView = (RecyclerView) findViewById(R.id.lv_path_contents);
-        //mProblemListView.setLayoutManager(layoutManager);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        mFolderContentsView = (RecyclerView) findViewById(R.id.lv_path_contents);
+        mFolderContentsView.setLayoutManager(layoutManager);
+
+        updateView();
 
         //FragmentManager fm = getSupportFragmentManager();
         //mGetProblemsFragment = (GetProblemsFragment) fm.findFragmentByTag(TAG_FRAGMENT);
@@ -105,11 +124,9 @@ public class MainActivity extends AppCompatActivity {
         //startActivity(startChildActivityIntent);
     }
 
-    private void updateProblemList(ArrayList<HashMap<String, String>> problemList) {
-        if (problemList == null)
-            return;
-        //ProblemAdapter newAdapter = new ProblemAdapter(this, R.layout.list_item, problemList);
-        //mProblemListView.swapAdapter(newAdapter, false);
+    private void updateView() {
+        FolderAdapter newAdapter = new FolderAdapter(this, R.layout.list_item, folderContentsList);
+        mFolderContentsView.swapAdapter(newAdapter, false);
     }
 
     //Start a new activity for sending a feedback email
