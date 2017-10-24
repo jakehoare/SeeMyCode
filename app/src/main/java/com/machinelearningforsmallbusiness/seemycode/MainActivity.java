@@ -26,7 +26,7 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mFolderContentsView;
-    private String currentPath = "copy_of_main";
+    private String currentPath = "copy_of_main/res";
     private ArrayList<HashMap<String, String>> folderContentsList;
     private TextView mCurrentPath;
     //private GetProblemsFragment mGetProblemsFragment;
@@ -39,36 +39,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         TextView mCurrentPath = (TextView) findViewById(R.id.tv_current_path);
-
-        String[] folderContentsArray = null;
-        try {
-            folderContentsArray = getAssets().list(currentPath);
-        } catch (IOException e) {
-            // TODO
-        }
-
         // currentPath = TextUtils.join(", ", folderContents);
         mCurrentPath.setText(currentPath);
 
-        folderContentsList = new ArrayList<>();
-        for (String item : folderContentsArray) {
-            HashMap<String, String> folder = new HashMap<>();
-            folder.put("name", item);
-            if (item.indexOf('.') == -1) {
-                folder.put("type", "folder");
-                // folder.put("icon", "1234");
-            } else {
-                folder.put("type", "file");
-                // folder.put("icon", "1234");
-            }
-            folderContentsList.add(folder);
-        }
+        folderContentsList = AssetUtilities.getFolderContents(currentPath, MainActivity.this);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         mFolderContentsView = (RecyclerView) findViewById(R.id.lv_path_contents);
         mFolderContentsView.setLayoutManager(layoutManager);
 
-        updateView();
+        AssetUtilities.showFolderContents(folderContentsList, mFolderContentsView, MainActivity.this);
 
         //FragmentManager fm = getSupportFragmentManager();
         //mGetProblemsFragment = (GetProblemsFragment) fm.findFragmentByTag(TAG_FRAGMENT);
@@ -106,27 +86,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
-    }
-
-    /********* UTILITIES *********/
-    private void showFileContents(int filteredIndex) {
-        //String downloadUrl = filteredProblemList.get(filteredIndex).get("download_url");
-        //String problemName = filteredProblemList.get(filteredIndex).get("name");
-        //String iconString = filteredProblemList.get(filteredIndex).get("icon");
-        Context context = MainActivity.this;
-        //Class destinationActivity = DisplayCodeActivity.class;
-        //Intent startChildActivityIntent = new Intent(context, destinationActivity);
-        Bundle extras = new Bundle();
-        //extras.putString("EXTRA_URL", downloadUrl);
-        //extras.putString("EXTRA_TITLE", problemName);
-        //extras.putString("EXTRA_ICON", iconString);
-        //startChildActivityIntent.putExtras(extras);
-        //startActivity(startChildActivityIntent);
-    }
-
-    private void updateView() {
-        FolderAdapter newAdapter = new FolderAdapter(this, R.layout.list_item, folderContentsList);
-        mFolderContentsView.swapAdapter(newAdapter, false);
     }
 
     //Start a new activity for sending a feedback email

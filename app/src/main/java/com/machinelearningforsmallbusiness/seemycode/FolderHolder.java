@@ -1,4 +1,5 @@
 package com.machinelearningforsmallbusiness.seemycode;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 class FolderHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -42,16 +44,22 @@ class FolderHolder extends RecyclerView.ViewHolder implements View.OnClickListen
         if (folder != null) {
             String type = folder.get("type");
 
-            if (type == "file") {
-                //Class destinationActivity = DisplayFileActivity.class;
-                //Intent startChildActivityIntent = new Intent(context, destinationActivity);
-                //Bundle extras = new Bundle();
-                //extras.putString("EXTRA_URL", downloadUrl);
-                //extras.putString("EXTRA_TITLE", problemName);
-                //extras.putString("EXTRA_ICON", iconString);
-                //startChildActivityIntent.putExtras(extras);
-                //context.startActivity(startChildActivityIntent);
+            if (type.equals("file")) {
+                // TODO launch child activity to display the code
+                AssetUtilities.showFileContents(1234);
+
             } else {
+
+                // TODO update the path, get new folder contents and update view
+                ArrayList<HashMap<String, String>> test =
+                        AssetUtilities.getFolderContents(folder.get("path"), v.getContext());
+                View rootView = ((Activity)context).getWindow().getDecorView().findViewById(android.R.id.content);
+                RecyclerView rv = rootView.findViewById(R.id.lv_path_contents);
+
+                AssetUtilities.showFolderContents(test,
+                        rv,
+                        context);
+
 
             }
         }
