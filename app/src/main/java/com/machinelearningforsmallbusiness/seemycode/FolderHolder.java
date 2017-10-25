@@ -45,21 +45,20 @@ class FolderHolder extends RecyclerView.ViewHolder implements View.OnClickListen
             String type = folder.get("type");
 
             if (type.equals("file")) {
-                // TODO launch child activity to display the code
-                AssetUtilities.showFileContents(1234);
+                Class destinationActivity = DisplayCodeActivity.class;
+                Intent startChildActivityIntent = new Intent(context, destinationActivity);
+                startChildActivityIntent.putExtra(Intent.EXTRA_TEXT, folder.get("path"));
+                context.startActivity(startChildActivityIntent);
 
             } else {
 
-                // TODO update the path, get new folder contents and update view
+                // update the path, get new folder contents and update view
                 ArrayList<HashMap<String, String>> test =
-                        AssetUtilities.getFolderContents(folder.get("path"), v.getContext());
+                        AssetUtilities.getFolderContents(folder.get("path"), context);
                 View rootView = ((Activity)context).getWindow().getDecorView().findViewById(android.R.id.content);
                 RecyclerView rv = rootView.findViewById(R.id.lv_path_contents);
 
-                AssetUtilities.showFolderContents(test,
-                        rv,
-                        context);
-
+                AssetUtilities.showFolderContents(test, rv, context);
 
             }
         }

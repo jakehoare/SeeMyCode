@@ -49,19 +49,4 @@ class AssetUtilities {
 
     }
 
-    static void showFileContents(int index) {
-        //String downloadUrl = filteredProblemList.get(filteredIndex).get("download_url");
-        //String problemName = filteredProblemList.get(filteredIndex).get("name");
-        //String iconString = filteredProblemList.get(filteredIndex).get("icon");
-        //Context context = MainActivity.this;
-        //Class destinationActivity = DisplayCodeActivity.class;
-        //Intent startChildActivityIntent = new Intent(context, destinationActivity);
-        Bundle extras = new Bundle();
-        //extras.putString("EXTRA_URL", downloadUrl);
-        //extras.putString("EXTRA_TITLE", problemName);
-        //extras.putString("EXTRA_ICON", iconString);
-        //startChildActivityIntent.putExtras(extras);
-        //startActivity(startChildActivityIntent);
-
-    }
 }
