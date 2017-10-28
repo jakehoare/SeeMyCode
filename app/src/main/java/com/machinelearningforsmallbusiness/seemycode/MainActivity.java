@@ -21,12 +21,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mFolderContentsView;
-    private String currentPath = "copy_of_main/res";
     private ArrayList<HashMap<String, String>> folderContentsList;
     private TextView mCurrentPath;
     //private GetProblemsFragment mGetProblemsFragment;
@@ -38,11 +36,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView mCurrentPath = (TextView) findViewById(R.id.tv_current_path);
+        mCurrentPath = (TextView) findViewById(R.id.tv_current_path);
         // currentPath = TextUtils.join(", ", folderContents);
-        mCurrentPath.setText(currentPath);
+        mCurrentPath.setText(getString(R.string.root_path));
 
-        folderContentsList = AssetUtilities.getFolderContents(currentPath, MainActivity.this);
+        folderContentsList = AssetUtilities.getFolderContents(getString(R.string.root_path), MainActivity.this);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         mFolderContentsView = (RecyclerView) findViewById(R.id.lv_path_contents);
@@ -86,6 +84,20 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        String path = mCurrentPath.getText().toString();
+        if (!path.equals(getString(R.string.root_path))) {
+            // update the path to the parent folder
+            path = path.substring(0, path.lastIndexOf('/'));
+            folderContentsList = AssetUtilities.getFolderContents(path, MainActivity.this);
+            AssetUtilities.showFolderContents(folderContentsList, mFolderContentsView, MainActivity.this);
+            mCurrentPath.setText(path);
+        }
+        else
+            super.onBackPressed();
     }
 
     //Start a new activity for sending a feedback email

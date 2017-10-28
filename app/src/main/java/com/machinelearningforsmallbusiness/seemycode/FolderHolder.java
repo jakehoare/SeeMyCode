@@ -53,13 +53,16 @@ class FolderHolder extends RecyclerView.ViewHolder implements View.OnClickListen
             } else {
 
                 // update the path, get new folder contents and update view
-                ArrayList<HashMap<String, String>> test =
-                        AssetUtilities.getFolderContents(folder.get("path"), context);
+                String path = folder.get("path");
+                ArrayList<HashMap<String, String>> folderContentsList =
+                        AssetUtilities.getFolderContents(path, context);
+
                 View rootView = ((Activity)context).getWindow().getDecorView().findViewById(android.R.id.content);
-                RecyclerView rv = rootView.findViewById(R.id.lv_path_contents);
+                RecyclerView mFolderContentsView = rootView.findViewById(R.id.lv_path_contents);
+                AssetUtilities.showFolderContents(folderContentsList, mFolderContentsView, context);
 
-                AssetUtilities.showFolderContents(test, rv, context);
-
+                TextView mCurrentPath = rootView.findViewById(R.id.tv_current_path);
+                mCurrentPath.setText(path);
             }
         }
     }
