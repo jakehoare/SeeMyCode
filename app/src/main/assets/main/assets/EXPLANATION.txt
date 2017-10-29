@@ -1,0 +1,13 @@
+/*
+Here comes the magic !
+
+An android app is packaged and complied in an APK file.
+This means that the original code cannot simply be read from the APK file.
+
+So we added a complete copy of our project structure into this Assets folder.
+Assets is usually a hierarchy of folders containing resources such as text or images.
+In this case the resources are the java and xml files that created the app.
+
+Obviously we could not put the Assets folder inside itself.
+So this file is the end of the rainbow.
+*/

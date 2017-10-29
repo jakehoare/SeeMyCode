@@ -1,8 +1,6 @@
 package com.machinelearningforsmallbusiness.seemycode;
 
-
 import android.content.Context;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 
 import java.io.IOException;
@@ -11,14 +9,13 @@ import java.util.HashMap;
 
 class AssetUtilities {
 
-    static ArrayList<HashMap<String, String>> getFolderContents(String path,
-                                                                       Context context) {
+    static void showFolderContents(String path, Context context, RecyclerView folderContentsView) {
 
         String[] folderContentsArray = null;
         try {
             folderContentsArray = context.getAssets().list(path);
         } catch (IOException e) {
-            // TODO handle this exception
+            throw new RuntimeException(e);
         }
 
         ArrayList<HashMap<String, String>> folderContentsList = new ArrayList<>();
@@ -28,25 +25,16 @@ class AssetUtilities {
             folder.put("path", path + "/" + item);
             if (item.indexOf('.') == -1) {
                 folder.put("type", "folder");
-                // folder.put("icon", "1234");
+                folder.put("icon", Integer.toString(R.mipmap.ic_folder));
             } else {
                 folder.put("type", "file");
-                // folder.put("icon", "1234");
+                folder.put("icon", Integer.toString(R.mipmap.ic_file));
             }
             folderContentsList.add(folder);
         }
 
-        return folderContentsList;
-    }
-
-    static void showFolderContents(ArrayList<HashMap<String, String>> folderContentsList,
-                                          RecyclerView folderContentsView,
-                                          Context context) {
-
-        // roll this into getFolderContents??
         FolderAdapter newAdapter = new FolderAdapter(context, R.layout.list_item, folderContentsList);
         folderContentsView.swapAdapter(newAdapter, false);
-
     }
 
 }

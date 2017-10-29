@@ -1,11 +1,13 @@
 package com.machinelearningforsmallbusiness.seemycode;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pddstudio.highlightjs.HighlightJsView;
@@ -13,16 +15,12 @@ import com.pddstudio.highlightjs.models.Language;
 import com.pddstudio.highlightjs.models.Theme;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class DisplayCodeActivity extends AppCompatActivity {
 
-    private String TAG = DisplayCodeActivity.class.getSimpleName();
-    private HighlightJsView mDisplayCode;
     private String filePath;
 
     @Override
@@ -30,24 +28,47 @@ public class DisplayCodeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_displaycode);
 
-        mDisplayCode = (HighlightJsView) findViewById(R.id.hjsv_code);
         TextView mDisplayPath = (TextView) findViewById(R.id.tv_file_path);
-
         Intent intentThatStartedThisActivity = getIntent();
-
         filePath = intentThatStartedThisActivity.getStringExtra(Intent.EXTRA_TEXT);
-
         mDisplayPath.setText(filePath);
 
+        String fileExtension = filePath.substring(filePath.lastIndexOf('.') + 1,
+                filePath.length());
+
+
+        if (fileExtension.equals("png")) {
+            ImageView mDisplayImage = (ImageView) findViewById(R.id.iv_image_file);
+            try
+            {
+                // get input stream
+                InputStream ims = getAssets().open(filePath);
+                // load image as Drawable
+                Drawable d = Drawable.createFromStream(ims, null);
+                // set image to ImageView
+                mDisplayImage.setImageDrawable(d);
+                ims.close();
+            }
+            catch(IOException ex)
+            {
+                return;
+            }
+
+            // alternatively - display from drawable
+            //String drawableName = filePath.substring(filePath.lastIndexOf('/') + 1,
+            //        filePath.lastIndexOf('.'));
+            //int resID = getResources().getIdentifier(drawableName, "mipmap",  getPackageName());
+            //mDisplayImage.setImageResource(resID);
+            return;
+        }
+
+        HighlightJsView mDisplayCode = (HighlightJsView) findViewById(R.id.hjsv_code);
+
         StringBuilder codeFile = new StringBuilder();
-
-        File file = new File(filePath);
-
         try {
             InputStream is = getAssets().open(filePath);
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
-            //BufferedReader br = new BufferedReader(new FileReader(file));
             String line;
 
             while ((line = br.readLine()) != null) {
@@ -60,35 +81,12 @@ public class DisplayCodeActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
 
-        /*
-        String codeFile;
-        try {
-            InputStream is = getAssets().open(filePath);
-
-            // We guarantee that the available method returns the total
-            // size of the asset...  of course, this does mean that a single
-            // asset can't be more than 2 gigs.
-            int size = is.available();
-
-            // Read the entire asset into a local byte buffer.
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-
-            // Convert the buffer into a string.
-            codeFile = new String(buffer);
-
-
-        } catch (IOException e) {
-            // Should never happen!
-            throw new RuntimeException(e);
-        }
-        */
-
         // https://github.com/PDDStudio/highlightjs-android
         mDisplayCode.setTheme(Theme.GITHUB);
-        // TODO find the correct language
-        mDisplayCode.setHighlightLanguage(Language.PYTHON);
+        com.pddstudio.highlightjs.models.Language language = Language.JAVA;
+        if (fileExtension.equals("xml"))
+            language = Language.XML;
+        mDisplayCode.setHighlightLanguage(language);
         mDisplayCode.setSource(codeFile.toString());
     }
 

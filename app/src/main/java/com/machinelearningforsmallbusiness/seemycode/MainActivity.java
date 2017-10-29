@@ -1,34 +1,19 @@
 package com.machinelearningforsmallbusiness.seemycode;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mFolderContentsView;
-    private ArrayList<HashMap<String, String>> folderContentsList;
     private TextView mCurrentPath;
-    //private GetProblemsFragment mGetProblemsFragment;
-    private static final String TAG_FRAGMENT = "get_problems_fragement";
 
 
     @Override
@@ -37,33 +22,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mCurrentPath = (TextView) findViewById(R.id.tv_current_path);
-        // currentPath = TextUtils.join(", ", folderContents);
         mCurrentPath.setText(getString(R.string.root_path));
-
-        folderContentsList = AssetUtilities.getFolderContents(getString(R.string.root_path), MainActivity.this);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         mFolderContentsView = (RecyclerView) findViewById(R.id.lv_path_contents);
         mFolderContentsView.setLayoutManager(layoutManager);
 
-        AssetUtilities.showFolderContents(folderContentsList, mFolderContentsView, MainActivity.this);
-
-        //FragmentManager fm = getSupportFragmentManager();
-        //mGetProblemsFragment = (GetProblemsFragment) fm.findFragmentByTag(TAG_FRAGMENT);
-
-        // If the fragment is null then create it, which performs the AsyncTask and
-        // returns and displays allProblemsList
-
-        //if (mGetProblemsFragment == null) {
-        //    mGetProblemsFragment = new GetProblemsFragment();
-        //    fm.beginTransaction().add(mGetProblemsFragment, TAG_FRAGMENT).commit();
-        //} else {
-            // Retrieve problem lists from fragment and display filteredProblemList
-            // https://developer.android.com/guide/topics/resources/runtime-changes.html
-        //    allProblemsList = mGetProblemsFragment.getAllProblems();
-        //    filteredProblemList = mGetProblemsFragment.getFilteredProblems();
-        //    updateProblemList(filteredProblemList);
-        //}
+        AssetUtilities.showFolderContents(getString(R.string.root_path), MainActivity.this, mFolderContentsView);
     }
 
     // Handle menu item click
@@ -90,14 +55,32 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         String path = mCurrentPath.getText().toString();
         if (!path.equals(getString(R.string.root_path))) {
-            // update the path to the parent folder
+            // Update the path to the parent folder
             path = path.substring(0, path.lastIndexOf('/'));
-            folderContentsList = AssetUtilities.getFolderContents(path, MainActivity.this);
-            AssetUtilities.showFolderContents(folderContentsList, mFolderContentsView, MainActivity.this);
             mCurrentPath.setText(path);
+            AssetUtilities.showFolderContents(path, MainActivity.this, mFolderContentsView);
         }
-        else
+        else    // Exit app if at from root
             super.onBackPressed();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the current path
+        savedInstanceState.putString("path", mCurrentPath.getText().toString());
+
+        // Call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Restore path from saved instance
+        String path = savedInstanceState.getString("path");
+        mCurrentPath.setText(path);
+        AssetUtilities.showFolderContents(path, MainActivity.this, mFolderContentsView);
     }
 
     //Start a new activity for sending a feedback email

@@ -2,13 +2,11 @@ package com.machinelearningforsmallbusiness.seemycode;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 class FolderHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -25,8 +23,8 @@ class FolderHolder extends RecyclerView.ViewHolder implements View.OnClickListen
 
         this.context = context;
 
-        this.mFileOrFolderIcon = (ImageView) itemView.findViewById(R.id.iv_file_or_folder_icon);
-        this.mFileOrFolderName = (TextView) itemView.findViewById(R.id.tv_file_or_folder_name);
+        this.mFileOrFolderIcon = itemView.findViewById(R.id.iv_file_or_folder_icon);
+        this.mFileOrFolderName = itemView.findViewById(R.id.tv_file_or_folder_name);
 
         itemView.setOnClickListener(this);
     }
@@ -35,7 +33,7 @@ class FolderHolder extends RecyclerView.ViewHolder implements View.OnClickListen
 
         this.folder = folder;
         this.mFileOrFolderName.setText(folder.get("name"));
-        //this.mFileOrFolderIcon.setImageResource(Integer.parseInt(folder.get("icon")));
+        this.mFileOrFolderIcon.setImageResource(Integer.parseInt(folder.get("icon")));
     }
 
     @Override
@@ -54,15 +52,12 @@ class FolderHolder extends RecyclerView.ViewHolder implements View.OnClickListen
 
                 // update the path, get new folder contents and update view
                 String path = folder.get("path");
-                ArrayList<HashMap<String, String>> folderContentsList =
-                        AssetUtilities.getFolderContents(path, context);
-
                 View rootView = ((Activity)context).getWindow().getDecorView().findViewById(android.R.id.content);
-                RecyclerView mFolderContentsView = rootView.findViewById(R.id.lv_path_contents);
-                AssetUtilities.showFolderContents(folderContentsList, mFolderContentsView, context);
-
                 TextView mCurrentPath = rootView.findViewById(R.id.tv_current_path);
                 mCurrentPath.setText(path);
+
+                RecyclerView mFolderContentsView = rootView.findViewById(R.id.lv_path_contents);
+                AssetUtilities.showFolderContents(path, context, mFolderContentsView);
             }
         }
     }
