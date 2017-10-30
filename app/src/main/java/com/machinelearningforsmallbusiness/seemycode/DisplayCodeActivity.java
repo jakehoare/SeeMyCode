@@ -1,10 +1,12 @@
 package com.machinelearningforsmallbusiness.seemycode;
 
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -43,8 +45,11 @@ public class DisplayCodeActivity extends AppCompatActivity {
             {
                 // get input stream
                 InputStream ims = getAssets().open(filePath);
-                // load image as Drawable
-                Drawable d = Drawable.createFromStream(ims, null);
+                // load image as Drawable and set to DENSITY_HIGH
+                BitmapFactory.Options opts = new BitmapFactory.Options();
+                opts.inDensity = DisplayMetrics.DENSITY_HIGH;
+                Drawable d = Drawable.createFromResourceStream(getResources(), null, ims, filePath, opts);
+
                 // set image to ImageView
                 mDisplayImage.setImageDrawable(d);
                 ims.close();
