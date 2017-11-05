@@ -19,16 +19,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        String path;
+        if (savedInstanceState != null)
+            path = savedInstanceState.getString("path");
+        else
+            path = getString(R.string.root_path);
+
         setContentView(R.layout.activity_main);
 
-        mCurrentPath = (TextView) findViewById(R.id.tv_current_path);
-        mCurrentPath.setText(getString(R.string.root_path));
+        mCurrentPath = findViewById(R.id.tv_current_path);
+        mCurrentPath.setText(path);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        mFolderContentsView = (RecyclerView) findViewById(R.id.lv_path_contents);
+        mFolderContentsView = findViewById(R.id.lv_path_contents);
         mFolderContentsView.setLayoutManager(layoutManager);
 
-        AssetUtilities.showFolderContents(getString(R.string.root_path), MainActivity.this, mFolderContentsView);
+        AssetUtilities.showFolderContents(path, MainActivity.this, mFolderContentsView);
     }
 
     // Handle menu item click
@@ -71,16 +78,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
-    }
-
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        // Call the superclass so it can restore the view hierarchy
-        super.onRestoreInstanceState(savedInstanceState);
-
-        // Restore path from saved instance
-        String path = savedInstanceState.getString("path");
-        mCurrentPath.setText(path);
-        AssetUtilities.showFolderContents(path, MainActivity.this, mFolderContentsView);
     }
 
     //Start a new activity for sending a feedback email
