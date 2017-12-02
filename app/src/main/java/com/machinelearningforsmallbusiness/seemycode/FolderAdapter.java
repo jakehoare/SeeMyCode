@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+// Adapter links the RecyclerView that shows folder contents, and the underlying data
 public class FolderAdapter extends RecyclerView.Adapter<FolderHolder> {
 
     private final ArrayList<HashMap<String, String>> contents;
@@ -23,6 +24,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderHolder> {
 
     @Override
     public FolderHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // Inflate the view and its holder
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(itemResource, parent, false);
         return new FolderHolder(context, view);
@@ -30,8 +32,9 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderHolder> {
 
     @Override
     public void onBindViewHolder(FolderHolder holder, int position) {
-        HashMap<String, String> folder = contents.get(position);
-        holder.bindFolder(folder);
+        // Bind the holder to the contents of the folder
+        HashMap<String, String> fileOrFolder = contents.get(position);
+        holder.bindFileOrFolder(fileOrFolder);
     }
 
     @Override

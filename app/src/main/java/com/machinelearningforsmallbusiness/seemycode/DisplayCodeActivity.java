@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+// Display the contents of a file
 public class DisplayCodeActivity extends AppCompatActivity {
 
     private String filePath;
@@ -30,46 +31,43 @@ public class DisplayCodeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_displaycode);
 
-        TextView mDisplayPath = (TextView) findViewById(R.id.tv_file_path);
+        // Get the path of the file from the parent intent, and display it n TextView
+        TextView mDisplayPath = findViewById(R.id.tv_file_path);
         Intent intentThatStartedThisActivity = getIntent();
         filePath = intentThatStartedThisActivity.getStringExtra(Intent.EXTRA_TEXT);
         mDisplayPath.setText(filePath);
 
+        // Get the file extension to determine how to display it
         String fileExtension = filePath.substring(filePath.lastIndexOf('.') + 1,
                 filePath.length());
 
-
         if (fileExtension.equals("png")) {
-            ImageView mDisplayImage = (ImageView) findViewById(R.id.iv_image_file);
+            // Display images
+            ImageView mDisplayImage = findViewById(R.id.iv_image_file);
             try
             {
-                // get input stream
+                // Get input stream
                 InputStream ims = getAssets().open(filePath);
-                // load image as Drawable and set to DENSITY_HIGH
+                // Load image as Drawable and set to DENSITY_HIGH
                 BitmapFactory.Options opts = new BitmapFactory.Options();
                 opts.inDensity = DisplayMetrics.DENSITY_HIGH;
                 Drawable d = Drawable.createFromResourceStream(getResources(), null, ims, filePath, opts);
 
-                // set image to ImageView
+                // Set image in ImageView
                 mDisplayImage.setImageDrawable(d);
                 ims.close();
             }
             catch(IOException ex)
             {
-                return;
+                ex.printStackTrace();
             }
 
-            // alternatively - display from drawable
-            //String drawableName = filePath.substring(filePath.lastIndexOf('/') + 1,
-            //        filePath.lastIndexOf('.'));
-            //int resID = getResources().getIdentifier(drawableName, "mipmap",  getPackageName());
-            //mDisplayImage.setImageResource(resID);
             return;
         }
 
-        HighlightJsView mDisplayCode = (HighlightJsView) findViewById(R.id.hjsv_code);
-
+        HighlightJsView mDisplayCode = findViewById(R.id.hjsv_code);
         StringBuilder codeFile = new StringBuilder();
+        // Build a string with the text of the file
         try {
             InputStream is = getAssets().open(filePath);
             InputStreamReader isr = new InputStreamReader(is);
@@ -86,7 +84,8 @@ public class DisplayCodeActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
 
-        // https://github.com/PDDStudio/highlightjs-android
+        // Syntax highlighting the code
+        // see https://github.com/PDDStudio/highlightjs-android
         mDisplayCode.setTheme(Theme.GITHUB);
         com.pddstudio.highlightjs.models.Language language = Language.JAVA;
         if (fileExtension.equals("xml"))
@@ -112,8 +111,7 @@ public class DisplayCodeActivity extends AppCompatActivity {
     private void sendFeedback() {
         Uri uri = Uri.parse(getString(R.string.mail_feedback_email));
         Intent mailIntent = new Intent(Intent.ACTION_SENDTO, uri);
-        mailIntent.putExtra(Intent.EXTRA_SUBJECT,
-                filePath);
+        mailIntent.putExtra(Intent.EXTRA_SUBJECT, filePath);
         startActivity(mailIntent);
     }
 

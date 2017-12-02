@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.util.HashMap;
 
+// Holder stores the data displayed by the adapter
 class FolderHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     private final ImageView mFileOrFolderIcon;
@@ -29,7 +30,7 @@ class FolderHolder extends RecyclerView.ViewHolder implements View.OnClickListen
         itemView.setOnClickListener(this);
     }
 
-    void bindFolder(HashMap<String, String> folder) {
+    void bindFileOrFolder(HashMap<String, String> folder) {
 
         this.folder = folder;
         this.mFileOrFolderName.setText(folder.get("name"));
@@ -43,6 +44,7 @@ class FolderHolder extends RecyclerView.ViewHolder implements View.OnClickListen
             String type = folder.get("type");
 
             if (type.equals("file")) {
+                // When clicked on a file, start a new activity to display the file contents
                 Class destinationActivity = DisplayCodeActivity.class;
                 Intent startChildActivityIntent = new Intent(context, destinationActivity);
                 startChildActivityIntent.putExtra(Intent.EXTRA_TEXT, folder.get("path"));
@@ -50,14 +52,14 @@ class FolderHolder extends RecyclerView.ViewHolder implements View.OnClickListen
 
             } else {
 
-                // update the path, get new folder contents and update view
+                // When clicke on a folder, update the path, get new folder contents and update view
                 String path = folder.get("path");
                 View rootView = ((Activity)context).getWindow().getDecorView().findViewById(android.R.id.content);
                 TextView mCurrentPath = rootView.findViewById(R.id.tv_current_path);
                 mCurrentPath.setText(path);
 
                 RecyclerView mFolderContentsView = rootView.findViewById(R.id.lv_path_contents);
-                AssetUtilities.showFolderContents(path, context, mFolderContentsView);
+                FolderManager.showFolderContents(path, context, mFolderContentsView);
             }
         }
     }

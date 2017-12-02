@@ -15,11 +15,12 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mFolderContentsView;
     private TextView mCurrentPath;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // State may be saved (e.g. on rotation) so use saved path if any or else
+        // start by displaying 'main' folder.
         String path;
         if (savedInstanceState != null)
             path = savedInstanceState.getString("path");
@@ -28,14 +29,15 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+        // Set the path in the TextView
         mCurrentPath = findViewById(R.id.tv_current_path);
         mCurrentPath.setText(path);
 
+        // Display path contents in RecyclerView
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         mFolderContentsView = findViewById(R.id.lv_path_contents);
         mFolderContentsView.setLayoutManager(layoutManager);
-
-        AssetUtilities.showFolderContents(path, MainActivity.this, mFolderContentsView);
+        FolderManager.showFolderContents(path, MainActivity.this, mFolderContentsView);
     }
 
     // Handle menu item click
@@ -60,12 +62,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        // Override because we want to go back up the folder structure, unless at 'main' in
+        // which case exit from app
         String path = mCurrentPath.getText().toString();
         if (!path.equals(getString(R.string.root_path))) {
             // Update the path to the parent folder
             path = path.substring(0, path.lastIndexOf('/'));
             mCurrentPath.setText(path);
-            AssetUtilities.showFolderContents(path, MainActivity.this, mFolderContentsView);
+            FolderManager.showFolderContents(path, MainActivity.this, mFolderContentsView);
         }
         else    // Exit app if at from root
             super.onBackPressed();
@@ -73,10 +77,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        // Save the current path
+        // Save the current path so we can return there
         savedInstanceState.putString("path", mCurrentPath.getText().toString());
-
-        // Call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
     }
 

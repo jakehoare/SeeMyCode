@@ -7,17 +7,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-class AssetUtilities {
+// Build a list of files and folders in this folder
+class FolderManager {
 
     static void showFolderContents(String path, Context context, RecyclerView folderContentsView) {
 
+        // Get an array of the names of folders and files
         String[] folderContentsArray = null;
         try {
             folderContentsArray = context.getAssets().list(path);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
 
+        // For each folder or file, create a mapping to store name, path, type and icon
         ArrayList<HashMap<String, String>> folderContentsList = new ArrayList<>();
         for (String item : folderContentsArray) {
             HashMap<String, String> folder = new HashMap<>();
